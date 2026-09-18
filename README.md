@@ -9,19 +9,6 @@ energy directives and applies them to a 24-hour energy optimization plan.
 
 ---
 
-## 🚀 Live Demo
-
-### Railway Production API
-https://gridwise-production-f810.up.railway.app
-
-### API Documentation
-https://gridwise-production-f810.up.railway.app/docs
-
-### Health Check
-https://gridwise-production-f810.up.railway.app/health
-
----
-
 ## ✨ Key Features
 
 - ⚡ 24-hour energy optimization
@@ -33,7 +20,7 @@ https://gridwise-production-f810.up.railway.app/health
 - 🔄 Deterministic offline fallback
 - 📊 Energy cost optimization
 - 🚀 Railway cloud deployment
-- 🔗 GitHub → Railway automatic deployment
+- 🔗 GitHub-based deployment
 - 📡 REST API using FastAPI
 
 ---
