@@ -1,0 +1,8 @@
+  → A browser is available on this machine — `railway login` without --browserless opens it directly and completes more reliably.
+
+  → Sign in with one click:
+    https://railway.com/activate?user_code=MJBZ-GNSM
+
+  → Or go to https://railway.com/activate and enter this code:
+    MJBZ-GNSM
+

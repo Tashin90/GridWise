@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GridWise · Smart Campus Energy Optimization</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>" />
+</head>
+<body>
+  <!-- ===================== HEADER ===================== -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-logo" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" />
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h1>GridWise</h1>
+        <span>Smart Campus Energy Optimization</span>
+      </div>
+    </div>
+
+    <div class="topbar-right">
+      <label class="api-config" title="Backend base URL">
+        <span class="api-config-label">API</span>
+        <input id="apiBase" type="text" value="http://127.0.0.1:8000" spellcheck="false" />
+      </label>
+      <div id="healthBadge" class="health-badge health-unknown" title="Backend health">
+        <span class="dot"></span>
+        <span class="health-text">Checking…</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===================== LAYOUT ===================== -->
+  <main class="layout">
+    <!-- ---------- LEFT: SCENARIO FORM ---------- -->
+    <section class="panel form-panel" aria-labelledby="formHeading">
+      <div class="panel-head">
+        <h2 id="formHeading">Scenario Input</h2>
+        <div class="panel-actions">
+          <button id="demoBtn" type="button" class="btn btn-ghost" title="Fill the form with a valid demo scenario">
+            Load Demo
+          </button>
+          <button id="resetBtn" type="button" class="btn btn-ghost" title="Reset the form to defaults">
+            Reset
+          </button>
+        </div>
+      </div>
+
+      <form id="scenarioForm" autocomplete="off">
+        <div class="field-row">
+          <label class="field">
+            <span>Scenario ID</span>
+            <input id="scenarioId" type="text" value="GRID-DEMO-001" required />
+          </label>
+          <label class="field">
+            <span>Electricity Tariff (BDT/kWh)</span>
+            <input id="tariff" type="number" step="0.01" min="0" value="7.00" required />
+          </label>
+        </div>
+
+        <fieldset class="battery-fieldset">
+          <legend>Battery Configuration</legend>
+          <div class="field-row">
+            <label class="field">
+              <span>Capacity (kWh)</span>
+              <input id="capKwh" type="number" step="1" min="0.1" value="500" required />
+            </label>
+            <label class="field">
+              <span>Initial Energy (kWh)</span>
+              <input id="initKwh" type="number" step="1" min="0" value="200" required />
+            </label>
+            <label class="field">
+              <span>Min Reserve (kWh)</span>
+              <input id="minKwh" type="number" step="1" min="0" value="50" required />
+            </label>
+          </div>
+          <div class="field-row">
+            <label class="field">
+              <span>Max Charge / hr (kWh)</span>
+              <input id="maxCharge" type="number" step="1" min="0" value="100" required />
+            </label>
+            <label class="field">
+              <span>Max Discharge / hr (kWh)</span>
+              <input id="maxDischarge" type="number" step="1" min="0" value="100" required />
+            </label>
+          </div>
+        </fieldset>
+
+        <div class="notes-block">
+          <div class="notes-head">
+            <span>Operator Notes (1–3)</span>
+            <button id="addNoteBtn" type="button" class="btn btn-mini">+ Add note</button>
+          </div>
+          <div id="notesList" class="notes-list"></div>
+        </div>
+
+        <div class="hours-block">
+          <div class="hours-head">
+            <span>24-Hour Demand & Solar</span>
+            <span class="hint">kWh per hour (0–23)</span>
+          </div>
+          <div class="table-wrap">
+            <table class="hours-editor" id="hoursEditor">
+              <thead>
+                <tr>
+                  <th>Hour</th>
+                  <th>Demand (kWh)</th>
+                  <th>Solar (kWh)</th>
+                </tr>
+              </thead>
+              <tbody id="hoursBody"><!-- filled by app.js --></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button id="optimizeBtn" type="submit" class="btn btn-primary btn-lg">
+            <span class="btn-label">Optimize Energy</span>
+            <span class="spinner" hidden></span>
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ---------- RIGHT: DASHBOARD ---------- -->
+    <section class="panel dashboard-panel" aria-labelledby="dashHeading">
+      <div class="panel-head">
+        <h2 id="dashHeading">Optimization Dashboard</h2>
+        <div class="status-line" id="statusLine">Awaiting a scenario…</div>
+      </div>
+
+      <!-- Error / empty states -->
+      <div id="errorBox" class="alert alert-error" hidden></div>
+      <div id="emptyState" class="empty-state">
+        <div class="empty-icon">⚡</div>
+        <p>No optimization yet.</p>
+        <p class="muted">Load the demo scenario and press <strong>Optimize Energy</strong>, or enter your own inputs on the left.</p>
+      </div>
+
+      <!-- Results (hidden until we have data) -->
+      <div id="results" hidden>
+        <!-- KPI cards -->
+        <div class="kpi-grid">
+          <div class="kpi kpi-cost">
+            <div class="kpi-label">Estimated Total Cost</div>
+            <div class="kpi-value"><span id="kpiCost">—</span><small>BDT</small></div>
+          </div>
+          <div class="kpi kpi-grid-energy">
+            <div class="kpi-label">Total Grid Energy</div>
+            <div class="kpi-value"><span id="kpiGrid">—</span><small>kWh</small></div>
+          </div>
+          <div class="kpi kpi-peak">
+            <div class="kpi-label">Peak Grid Usage</div>
+            <div class="kpi-value"><span id="kpiPeak">—</span><small>kWh</small></div>
+          </div>
+          <div class="kpi kpi-solar">
+            <div class="kpi-label">Solar Used</div>
+            <div class="kpi-value"><span id="kpiSolar">—</span><small>kWh</small></div>
+          </div>
+          <div class="kpi kpi-battery">
+            <div class="kpi-label">Battery (final)</div>
+            <div class="kpi-value"><span id="kpiBattery">—</span><small>kWh</small></div>
+          </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="summary-card">
+          <h3>Optimization Summary</h3>
+          <div class="summary-meta">
+            <span class="meta-item"><span class="meta-label">Scenario ID</span><span id="summaryScenario" class="meta-value">—</span></span>
+          </div>
+          <p id="planSummary" class="summary-text">—</p>
+        </div>
+
+        <!-- Directive interpretation -->
+        <div class="card">
+          <h3>Directive Interpretation</h3>
+          <div id="directivesTable" class="table-wrap"></div>
+        </div>
+
+        <!-- Charts -->
+        <div class="card">
+          <h3>Energy Profile (24h)</h3>
+          <div class="legend">
+            <span class="lg lg-demand">Demand</span>
+            <span class="lg lg-solar">Solar used</span>
+            <span class="lg lg-grid">Grid</span>
+            <span class="lg lg-battery">Battery energy</span>
+          </div>
+          <div id="energyChart" class="chart"></div>
+        </div>
+
+        <div class="card">
+          <h3>Battery Actions (24h)</h3>
+          <div class="legend">
+            <span class="lg lg-charge">Charge</span>
+            <span class="lg lg-discharge">Discharge</span>
+            <span class="lg lg-idle">Idle</span>
+          </div>
+          <div id="batteryChart" class="chart"></div>
+        </div>
+
+        <!-- Hourly plan table -->
+        <div class="card">
+          <h3>Hourly Plan</h3>
+          <div class="table-wrap">
+            <table class="plan-table">
+              <thead>
+                <tr>
+                  <th>Hour</th>
+                  <th>Grid (kWh)</th>
+                  <th>Solar Used (kWh)</th>
+                  <th>Battery Action</th>
+                  <th>Battery In/Out (kWh)</th>
+                  <th>Battery Energy After (kWh)</th>
+                </tr>
+              </thead>
+              <tbody id="planBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>GridWise · BUP CSE Fest 2026 · LLM-assisted operator directive interpretation</span>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
