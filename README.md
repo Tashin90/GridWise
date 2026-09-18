@@ -1,59 +1,52 @@
-# GridWise ⚡
+# ⚡ GridWise
 
 ### AI-Assisted Energy Optimization Platform
 
-GridWise is an intelligent energy optimization platform that combines
-**Natural Language Processing, LLM-assisted directive interpretation,**
-**validation guardrails, and constraint-based optimization** to generate
-feasible 24-hour energy schedules.
+> 🏆 **Hackathon Project**
 
-The system allows operators to provide energy-related instructions in
-natural language. These instructions are interpreted into structured
-directives and then incorporated into the optimization process while
-maintaining system constraints and battery safety requirements.
+GridWise is an AI-assisted energy optimization platform developed for a
+hackathon challenge. The system combines **LLM-based natural language
+interpretation, validation guardrails, and constraint-based optimization**
+to generate a feasible 24-hour energy schedule.
+
+The platform allows operators to provide energy-related instructions in
+natural language. These instructions are converted into structured
+directives, validated through guardrails, and incorporated into the energy
+optimization process.
 
 ---
 
-## Overview
+## 🏆 Hackathon Project
 
-Modern energy systems need to balance multiple resources such as:
+GridWise was developed as part of a **Hackathon challenge** focused on
+building an intelligent energy optimization solution.
 
-- Grid electricity
-- Solar generation
+### Challenge Focus
+
+The project focuses on solving an energy management problem involving:
+
+- Grid electricity consumption
+- Solar energy generation
 - Battery storage
-- Charging and discharging
-- Energy costs
+- Battery charging and discharging
+- Energy cost optimization
 - Operational constraints
+- Natural-language operator instructions
 
-GridWise addresses this problem through a pipeline that transforms
-natural-language operator instructions into structured optimization
-constraints.
+### Our Approach
+
+Instead of requiring operators to manually configure every optimization
+constraint, GridWise provides a natural-language interface.
 
 ```text
-┌─────────────────────┐
-│  Operator Input     │
-│  Natural Language   │
-└──────────┬──────────┘
-           │
-           ▼
-┌─────────────────────┐
-│   LLM Interpreter   │
-│  Directive Parsing  │
-└──────────┬──────────┘
-           │
-           ▼
-┌─────────────────────┐
-│     Guardrails      │
-│ Validation & Safety │
-└──────────┬──────────┘
-           │
-           ▼
-┌─────────────────────┐
-│  CP-SAT Optimizer   │
-│     OR-Tools        │
-└──────────┬──────────┘
-           │
-           ▼
-┌─────────────────────┐
-│ 24-Hour Energy Plan │
-└─────────────────────┘
+Operator Instruction
+        ↓
+LLM Interpretation
+        ↓
+Structured Directive
+        ↓
+Guardrails Validation
+        ↓
+CP-SAT Optimization
+        ↓
+24-Hour Energy Schedule
