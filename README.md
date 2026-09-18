@@ -1,56 +1,59 @@
-# ⚡ GridWise — AI-Assisted Energy Optimization
+# GridWise ⚡
 
-GridWise is an intelligent energy optimization system designed to optimize
-grid electricity usage, solar generation, and battery storage using
-constraint-based optimization and LLM-assisted operator note interpretation.
+### AI-Assisted Energy Optimization Platform
 
-The system converts natural-language operator instructions into structured
-energy directives and applies them to a 24-hour energy optimization plan.
+GridWise is an intelligent energy optimization platform that combines
+**Natural Language Processing, LLM-assisted directive interpretation,**
+**validation guardrails, and constraint-based optimization** to generate
+feasible 24-hour energy schedules.
 
----
-
-## ✨ Key Features
-
-- ⚡ 24-hour energy optimization
-- 🔋 Battery charging and discharging optimization
-- ☀️ Solar generation handling
-- 🌐 Grid electricity optimization
-- 🤖 LLM-assisted operator note interpretation
-- 🛡️ Guardrails for structured directives
-- 🔄 Deterministic offline fallback
-- 📊 Energy cost optimization
-- 🚀 Railway cloud deployment
-- 🔗 GitHub-based deployment
-- 📡 REST API using FastAPI
+The system allows operators to provide energy-related instructions in
+natural language. These instructions are interpreted into structured
+directives and then incorporated into the optimization process while
+maintaining system constraints and battery safety requirements.
 
 ---
 
-## 🧠 How It Works
+## Overview
+
+Modern energy systems need to balance multiple resources such as:
+
+- Grid electricity
+- Solar generation
+- Battery storage
+- Charging and discharging
+- Energy costs
+- Operational constraints
+
+GridWise addresses this problem through a pipeline that transforms
+natural-language operator instructions into structured optimization
+constraints.
 
 ```text
-Operator Notes
-      │
-      ▼
-┌──────────────────────┐
-│ LLM Interpretation   │
-└──────────┬───────────┘
+┌─────────────────────┐
+│  Operator Input     │
+│  Natural Language   │
+└──────────┬──────────┘
            │
            ▼
- Structured Directives
+┌─────────────────────┐
+│   LLM Interpreter   │
+│  Directive Parsing  │
+└──────────┬──────────┘
            │
            ▼
-┌──────────────────────┐
-│ Guardrails / Validate│
-└──────────┬───────────┘
+┌─────────────────────┐
+│     Guardrails      │
+│ Validation & Safety │
+└──────────┬──────────┘
            │
            ▼
-┌──────────────────────┐
-│ Energy Optimizer     │
-│ CP-SAT / OR-Tools    │
-└──────────┬───────────┘
+┌─────────────────────┐
+│  CP-SAT Optimizer   │
+│     OR-Tools        │
+└──────────┬──────────┘
            │
            ▼
-  24-Hour Energy Plan
-           │
-           ▼
- Grid + Solar + Battery
+┌─────────────────────┐
+│ 24-Hour Energy Plan │
+└─────────────────────┘
